@@ -1,0 +1,32 @@
+!!!
+%html
+  %head
+
+  %body
+    %h1 W3rms
+    :javascript
+      var source = new EventSource('/');
+
+      // new connection opened callback
+      source.addEventListener('open', function(e) {
+        console.log('connection opened');
+      }, false);
+
+      // subscribe to unnamed messages
+      source.onmessage = function(e) {
+        console.log(e);
+        document.body.innerHTML += e.data + '<br />';
+      };
+
+      // listen for signup events
+      source.addEventListener('signup', function(e) {
+        console.log(e);
+        document.body.innerHTML += e.data + '<br />';
+      }, false);
+
+      // connection closed callback
+      source.addEventListener('error', function(e) {
+        if (e.eventPhase == EventSource.CLOSED) {
+          console.log('connection closed');
+        }
+      }, false);
