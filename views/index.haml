@@ -1,11 +1,13 @@
 !!!
 %html
   %head
-
+    %title W3rm Farm
+    %link{ :href => "/stylesheets/main.css", :rel => "stylesheet", :type => "text/css"}
   %body
     %h1 W3rms
+    #world
     :javascript
-      var source = new EventSource('/');
+      var source = new EventSource('/world');
 
       // new connection opened callback
       source.addEventListener('open', function(e) {
@@ -15,7 +17,7 @@
       // subscribe to unnamed messages
       source.onmessage = function(e) {
         console.log(e);
-        document.body.innerHTML += e.data + '<br />';
+        document.getElementById('world').innerHTML = e.data;
       };
 
       // listen for signup events
