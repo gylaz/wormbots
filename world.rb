@@ -1,11 +1,15 @@
 require 'goliath'
 require 'tilt'
+require 'json'
+require_relative 'worm'
 
 class World < Goliath::API
   def response(env)
+  	worm = Worm.new
     EM.add_periodic_timer(1) do
+    	worm.live	
     	# must have two \n at the end
-    	env.stream_send("data: #{rand(100)}\n\n")
+    	env.stream_send("data: #{worm.data.to_json}\n\n")
 		end
 
 		streaming_response(200, {'Content-Type' => 'text/event-stream'})

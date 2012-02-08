@@ -5,6 +5,7 @@ h1 {
   text-align: center;
 }
 #world {
+  position: relative;
   margin: 0 auto;
   width: 640px;
   height: 480px;
@@ -13,5 +14,11 @@ h1 {
   border-radius: 5x;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
-  color: #ffc;
+}
+
+#world .worm {
+  display: none;
+  position: absolute;
+  height: 4px;
+  background-color: #ffc;
 }
