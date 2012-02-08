@@ -19,7 +19,7 @@ class Routes < Goliath::API
 	# render static files from ./public
 	use(Rack::Static,
 		:root => Goliath::Application.app_path('public'),
-		:urls => ['/stylesheets'])
+		:urls => ['/stylesheets', '/javascripts'])
 		# :urls => ['/favicon.ico', '/stylesheets', '/javascripts', '/images'])
 
 	get '/world', World
