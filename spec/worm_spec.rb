@@ -92,6 +92,26 @@ describe Worm do
     it "returns the points" do
       subject.live.should == subject.points
     end
+
+    context "after 500 days" do
+      before { 500.times { subject.live} }
+
+      its(:age) { should == 500 }
+      its(:points) { should have(40).items }
+
+      it "doesn't have any negative coordinates" do
+        subject.points.flatten.each do |coord|
+          coord.should > 0
+        end
+      end
+
+      it "doesn't have any out of limit coordinates" do
+        subject.points.each do |point|
+          point[0].should <= World::MAX_X
+          point[1].should <= World::MAX_Y
+        end
+      end
+    end
   end
 
   describe "#move" do

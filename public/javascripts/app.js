@@ -7,14 +7,14 @@ $(document).ready(function() {
 
   source.onmessage = function(e) {
     //console.log(e.data);
-    x = $.parseJSON(e.data)[1];
-    y = $.parseJSON(e.data)[0];
-    size = $.parseJSON(e.data)[2];
-    width = parseInt($('.worm').css('width'));
-    $('.worm').css('top', x);
-    $('.worm').css('left', y);
-    $('.worm').css('width', size);
-    $('.worm').show();
+    $('#world').empty();
+
+    points = $.parseJSON(e.data);
+    $.each(points, function(i, point) {
+      x = point[0]*2;
+      y = point[1]*2;
+      $('<div class="point"></div>').css({top: y, left: x}).appendTo('#world');
+    });
   };
 
   source.addEventListener('error', function(e) {

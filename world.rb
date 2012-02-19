@@ -2,8 +2,8 @@ class World
 
   CARDINALITY = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1,0] }
   DIRECTIONS = CARDINALITY.keys
-  MAX_X = 320 # horizontal size
-  MAX_Y = 240 # vertical size
+  MAX_X = 320 - 2 # horizontal size
+  MAX_Y = 240 - 2# vertical size
 
   def initialize
     @worms = []
@@ -14,7 +14,9 @@ class World
   end
 
   def tick
-    @worms.map(&:live)
+    data = []
+    @worms.each {|worm| data.concat(worm.live)}
+    data
   end
 
   def starting_point

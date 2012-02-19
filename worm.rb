@@ -11,20 +11,30 @@ class Worm
   end
 
   def live
-    grow if @age % 10 == 0
-    move
     @age += 1
+    grow
+    move
 
     points
   end
 
   def move
-    direction = possible_directions[rand(possible_directions.size)]
+    @direction = weighted_possibilities.shuffle[rand(weighted_possibilities.size)]
     self.send("move_#{direction}")
   end
 
+  def weighted_possibilities
+    if possible_directions.include? @direction
+      possible_directions + 20.times.map { @direction }
+    else
+      possible_directions
+    end
+  end
+
   def grow
-    @points << append_point
+    if @age % 10 == 0 && points.size < 40
+      @points << append_point
+    end
   end
 
   def possible_directions

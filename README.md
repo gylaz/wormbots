@@ -1,7 +1,7 @@
 # Running
 To run the app:
 
-    ruby world.rb
+    ruby server.rb
 It will be accessible on port 9000
 
 # Gotchas

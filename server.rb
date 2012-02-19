@@ -5,11 +5,10 @@ require_relative 'world'
 require_relative 'worm'
 
 $world = World.new
+$world.spawn_worm
 
 class Server < Goliath::API
   def response(env)
-    $world.spawn_worm
-
     EM.add_periodic_timer(1) do
     	# must have two \n at the end
     	env.stream_send("data: #{$world.tick.to_json}\n\n")
