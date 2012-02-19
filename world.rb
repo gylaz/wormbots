@@ -1,35 +1,45 @@
-require 'goliath'
-require 'tilt'
-require 'json'
-require_relative 'worm'
+class World
 
-$worm = Worm.new
+  CARDINALITY = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1,0] }
+  DIRECTIONS = CARDINALITY.keys
+  MAX_X = 320 # horizontal size
+  MAX_Y = 240 # vertical size
 
-class World < Goliath::API
-  def response(env)
-    EM.add_periodic_timer(1) do
-    	$worm.live	
-    	# must have two \n at the end
-    	env.stream_send("data: #{$worm.data.to_json}\n\n")
-		end
-
-		streaming_response(200, {'Content-Type' => 'text/event-stream'})
+  def initialize
+    @worms = []
   end
-end
 
-class Routes < Goliath::API
-	# render templated files from ./views
-	include Goliath::Rack::Templates
-	
-	# render static files from ./public
-	use(Rack::Static,
-		:root => Goliath::Application.app_path('public'),
-		:urls => ['/stylesheets', '/javascripts'])
-		# :urls => ['/favicon.ico', '/stylesheets', '/javascripts', '/images'])
+  def spawn_worm
+    @worms << Worm.new(starting_point, starting_direction)
+  end
 
-	get '/world', World
-	
-	def response(env)
-		[200, {}, haml(:index)]
-	end
+  def tick
+    @worms.map(&:live)
+  end
+
+  def starting_point
+    [Kernel.rand(MAX_X), Kernel.rand(MAX_Y)]
+  end
+
+  def starting_direction
+    DIRECTIONS[Kernel.rand(4)]
+  end
+
+  def self.edges_reached(point)
+    edges = []
+    x, y = point
+    if x == 0
+      edges << :left
+    elsif x == MAX_X
+      edges << :right
+    end
+
+    if y == 0
+      edges << :up
+    elsif y == MAX_Y
+      edges << :down
+    end
+    edges
+  end
+
 end

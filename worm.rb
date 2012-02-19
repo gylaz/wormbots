@@ -1,76 +1,70 @@
+require_relative 'world'
+
 class Worm
-  attr_accessor :coords, :direction, :size
+  attr_accessor :points, :direction, :age
 
-  CARDINALITY = { up: [0, 1], down: [0, -1], left: [-1, 0], right: [1,0] }
-  DIRECTIONS = CARDINALITY.keys
-
-  def initialize
+  def initialize(starting_point, direction)
     @age = 0
-    @size = 4
-    @direction = randomize_direction
-    @coords = initial_coords
+    @direction = direction
+    @points = [starting_point]
+    3.times { @points << append_point }
   end
 
   def live
     grow if @age % 10 == 0
     move
     @age += 1
+
+    points
   end
 
   def move
-    self.send("move_#{possible_directions[rand(3)]}")
+    direction = possible_directions[rand(possible_directions.size)]
+    self.send("move_#{direction}")
   end
 
   def grow
-    @size += 1
-    @coords << calculate_point(@coords.last)
-  end
-
-  def data
-    [@size, @coords]
-  end
-
-  def calculate_point(ref=nil)
-    if ref
-      math = CARDINALITY[direction.to_sym]
-      [ref.first + math.first, ref.last + math.last]
-    else
-      [rand(640-2), rand(480-2)]
-    end
-  end
-
-  def randomize_direction
-    DIRECTIONS[rand(4)]
-  end
-
-  def initial_coords
-    coords = []
-    @size.times do
-      coords << calculate_point(coords.last)
-    end
-    coords
+    @points << append_point
   end
 
   def possible_directions
     case direction
     when :up
-      DIRECTIONS - [:down]
+      restrictions = [:down]
     when :down
-      DIRECTIONS - [:up]
+      restrictions = [:up]
     when :left
-      DIRECTIONS - [:right]
+      restrictions = [:right]
     when :right
-      DIRECTIONS - [:left]
+      restrictions = [:left]
     end
+    ::World::DIRECTIONS - restrictions - ::World.edges_reached(head)
   end
 
-  DIRECTIONS.each do |direction|
+  def math
+    ::World::CARDINALITY[direction.to_sym]
+  end
+
+  def append_point
+    [tail.first - math.first, tail.last - math.last]
+  end
+
+  def prepend_point
+    [head.first + math.first, head.last + math.last]
+  end
+
+  def head
+    points.first
+  end
+
+  def tail
+    points.last
+  end
+
+  ::World::DIRECTIONS.each do |direction|
     define_method "move_#{direction}" do
-      coords.each do |coord|
-        math = CARDINALITY[direction.to_sym]
-        coord.first += math.first
-        coord.last += math.last
-      end
+      points.unshift(prepend_point)
+      points.pop
     end
   end
 end
