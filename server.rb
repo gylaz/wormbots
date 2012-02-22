@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-$: << File.dirname(__FILE__) + '/lib'
+$:.unshift File.expand_path(File.dirname(__FILE__) + '/lib')
+
 require 'goliath'
 require 'tilt'
 require 'json'
