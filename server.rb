@@ -1,8 +1,9 @@
+#!/usr/bin/env ruby
+$: << File.dirname(__FILE__) + '/lib'
 require 'goliath'
 require 'tilt'
 require 'json'
-require_relative 'world'
-require_relative 'worm'
+require 'wormbots'
 
 $world = World.new
 $world.spawn_worm

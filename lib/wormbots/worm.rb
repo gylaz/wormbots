@@ -1,5 +1,3 @@
-require_relative 'world'
-
 class Worm
   attr_accessor :points, :direction, :age
 
