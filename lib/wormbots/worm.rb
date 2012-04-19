@@ -46,7 +46,7 @@ class Worm
     when :right
       restrictions = [:left]
     end
-    ::World::DIRECTIONS - restrictions - ::World.edges_reached(head)
+    ::World::DIRECTIONS - restrictions - ::World.restricted_directions(head)
   end
 
   def math

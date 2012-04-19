@@ -1,4 +1,4 @@
-require_relative '../worm'
+require 'wormbots/worm'
 
 describe Worm do
   let(:worm) { Worm.new([100, 200], :up) }
@@ -101,7 +101,7 @@ describe Worm do
 
       it "doesn't have any negative coordinates" do
         subject.points.flatten.each do |coord|
-          coord.should > 0
+          coord.should >= 0
         end
       end
 

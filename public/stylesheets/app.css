@@ -22,3 +22,7 @@ h1 {
   height: 4px;
   background-color: #ffc;
 }
+
+#world .head {
+  background-color: #003;
+}

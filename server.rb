@@ -7,7 +7,7 @@ require 'json'
 require 'wormbots'
 
 $world = World.new
-$world.spawn_worm
+10.times { $world.spawn_worm }
 
 class Server < Goliath::API
   def response(env)

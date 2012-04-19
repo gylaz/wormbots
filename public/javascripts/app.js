@@ -11,9 +11,14 @@ $(document).ready(function() {
 
     points = $.parseJSON(e.data);
     $.each(points, function(i, point) {
-      x = point[0]*2;
-      y = point[1]*2;
-      $('<div class="point"></div>').css({top: y, left: x}).appendTo('#world');
+      x = point[0];
+      y = point[1];
+      if (i >= 0 && i < 2) {
+        $('<div class="point head"></div>').css({top: y, left: x}).appendTo('#world');
+      }
+      else {
+        $('<div class="point"></div>').css({top: y, left: x}).appendTo('#world');
+      }
     });
   };
 
