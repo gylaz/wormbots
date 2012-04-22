@@ -9,8 +9,9 @@ require 'wormbots'
 
 class Server < Goliath::API
   def response(env)
+    fiber = $world.fiber
     EM.add_periodic_timer(0.1) do
-      data = $fiber.resume
+      data = fiber.resume
     	# must have two \n at the end
     	env.stream_send("data: #{data.to_json}\n\n")
 		end
@@ -36,4 +37,4 @@ class Routes < Goliath::API
 	end
 end
 
-$fiber = World.new.fiber_loop
+$world = World.new

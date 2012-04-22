@@ -6,10 +6,11 @@ class World
   def initialize
     @worms = []
     10.times { spawn_worm }
+    @last_update = Time.now
   end
 
-  def fiber_loop
-    @fiber_loop ||= Fiber.new {
+  def fiber
+    @fiber ||= Fiber.new {
       loop do
         tick
         Fiber.yield data_points
@@ -22,11 +23,13 @@ class World
   end
 
   def tick
-    now_secs = Time.now.to_i
-    days = @last_update ? @last_update - now_secs : 0
-    @last_update = now_secs
+    now = Time.now
+    days = time_diff_in_millis(now, @last_update)
 
-    @worms.each { |worm| worm.live(days) }
+    if days > 0 
+      @worms.each { |worm| worm.live(days) }
+      @last_update = now
+    end
   end
 
   def data_points
@@ -68,6 +71,10 @@ class World
   end
 
   private
+
+  def time_diff_in_millis(t1, t2)
+    ((t1 - t2) * 10).to_i
+  end
 
   def starting_point
     [Kernel.rand(MAX_X), Kernel.rand(MAX_Y)]

@@ -3,9 +3,9 @@ require 'wormbots'
 describe World do
   let(:world) { World.new }
 
-  describe "#fiber_loop" do
+  describe "#fiber" do
     it "returns a fiber" do
-      world.fiber_loop.should be_an_instance_of Fiber
+      world.fiber.should be_an_instance_of Fiber
     end
   end
 
@@ -20,7 +20,10 @@ describe World do
   end
 
   describe "#tick" do
-    before { world.spawn_worm }
+    before do
+      world.spawn_worm
+      sleep 0.1
+    end
 
     it "updates last_update" do
       expect { world.tick }.to change {
@@ -29,7 +32,7 @@ describe World do
 
     it "lets the worms live" do
       worm = world.instance_variable_get("@worms").first
-      worm.should_receive(:live).with(0)
+      worm.should_receive(:live).with(1)
       world.tick
     end
   end
