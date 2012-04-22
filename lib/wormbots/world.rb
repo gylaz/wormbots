@@ -1,11 +1,20 @@
 class World
-  CARDINALITY = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1,0] }
-  DIRECTIONS = CARDINALITY.keys
-  MAX_X = 640 - 4 # horizontal size
-  MAX_Y = 480 - 4 # vertical size
+  DIRECTIONS = [:up, :down, :left, :right]
+  MAX_X = 640 - 4 # horizontal limit
+  MAX_Y = 480 - 4 # vertical limit
 
   def initialize
     @worms = []
+    10.times { spawn_worm }
+  end
+
+  def fiber_loop
+    @fiber_loop ||= Fiber.new {
+      loop do
+        tick
+        Fiber.yield data_points
+      end
+    }
   end
 
   def spawn_worm
@@ -13,24 +22,29 @@ class World
   end
 
   def tick
-    data = []
-    @worms.each {|worm| data.concat(worm.live)}
-    data
+    now_secs = Time.now.to_i
+    days = @last_update ? @last_update - now_secs : 0
+    @last_update = now_secs
+
+    @worms.each { |worm| worm.live(days) }
+  end
+
+  def data_points
+    @worms.map { |worm| worm.coordinates }
   end
 
   def self.restricted_directions(point)
     restricted = []
-    x, y = point
 
-    if left_edge_reached?(x)
+    if left_edge_reached?(point.x)
       restricted << :left
-    elsif right_edge_reached?(x)
+    elsif right_edge_reached?(point.x)
       restricted << :right
     end
 
-    if top_edge_reached?(y)
+    if top_edge_reached?(point.y)
       restricted << :up
-    elsif bottom_edge_reached?(y)
+    elsif bottom_edge_reached?(point.y)
       restricted << :down
     end
 

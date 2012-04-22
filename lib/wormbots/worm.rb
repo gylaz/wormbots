@@ -1,19 +1,26 @@
 class Worm
+  UNIT_SIZE = 1
+  MAX_SIZE = 40
+  CARDINALITY = { up:    { x: 0,  y: -1 },
+                  down:  { x: 0,  y: 1 },
+                  left:  { x: -1, y: 0 },
+                  right: { x: 1,  y: 0 } }
+
   attr_accessor :points, :direction, :age
 
-  def initialize(starting_point, direction)
+  def initialize(starting_coords, direction)
     @age = 0
     @direction = direction
-    @points = [starting_point]
-    3.times { @points << append_point }
+    @points = [Point.new(*starting_coords)]
+    3.times { append_point }
   end
 
-  def live
-    @age += 1
-    grow
-    move
-
-    points
+  def live(days)
+    days.times do
+      @age += 1
+      grow if time_to_grow?
+      move
+    end
   end
 
   def move
@@ -21,18 +28,20 @@ class Worm
     self.send("move_#{direction}")
   end
 
+  def coordinates
+    points.map { |p| [p.x, p.y] }
+  end
+
   def weighted_possibilities
     if possible_directions.include? @direction
-      possible_directions + 20.times.map { @direction }
+      possible_directions + 10.times.map { @direction }
     else
       possible_directions
     end
   end
 
   def grow
-    if @age % 10 == 0 && points.size < 40
-      @points << append_point
-    end
+    append_point
   end
 
   def possible_directions
@@ -50,15 +59,19 @@ class Worm
   end
 
   def math
-    ::World::CARDINALITY[direction.to_sym]
+    CARDINALITY[direction.to_sym]
   end
 
   def append_point
-    [tail.first - math.first, tail.last - math.last]
+    new_x = tail.x - math[:x]
+    new_y = tail.y - math[:y]
+    points << Point.new(new_x, new_y)
   end
 
   def prepend_point
-    [head.first + math.first, head.last + math.last]
+    new_x = head.x + math[:x]
+    new_y = head.y + math[:y]
+    points.unshift Point.new(new_x, new_y)
   end
 
   def head
@@ -69,10 +82,24 @@ class Worm
     points.last
   end
 
+  def moving_horizontally?
+    [:left, :right].include?(direction)
+  end
+
+  def moving_vertically?
+    [:up, :down].include?(direction)
+  end
+
   ::World::DIRECTIONS.each do |direction|
     define_method "move_#{direction}" do
-      points.unshift(prepend_point)
+      prepend_point
       points.pop
     end
+  end
+
+  private
+
+  def time_to_grow?
+    @age % 10 == 0 && points.size < MAX_SIZE
   end
 end

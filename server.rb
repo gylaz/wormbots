@@ -4,16 +4,15 @@ $:.unshift File.expand_path(File.dirname(__FILE__) + '/lib')
 require 'goliath'
 require 'tilt'
 require 'json'
+require 'haml'
 require 'wormbots'
-
-$world = World.new
-10.times { $world.spawn_worm }
 
 class Server < Goliath::API
   def response(env)
-    EM.add_periodic_timer(1) do
+    EM.add_periodic_timer(0.1) do
+      data = $fiber.resume
     	# must have two \n at the end
-    	env.stream_send("data: #{$world.tick.to_json}\n\n")
+    	env.stream_send("data: #{data.to_json}\n\n")
 		end
 
 		streaming_response(200, {'Content-Type' => 'text/event-stream'})
@@ -36,3 +35,5 @@ class Routes < Goliath::API
 		[200, {}, haml(:index)]
 	end
 end
+
+$fiber = World.new.fiber_loop

@@ -1,7 +1,9 @@
-require 'wormbots/worm'
+require 'wormbots'
 
 describe Worm do
-  let(:worm) { Worm.new([100, 200], :up) }
+  let(:initial_x) { 100 }
+  let(:initial_y) { 200 }
+  let(:worm) { Worm.new([initial_x, initial_y], :up) }
 
   subject { worm }
   its(:points) { should have(4).items }
@@ -20,12 +22,12 @@ describe Worm do
       end
 
       it "can only go left or right when at the bottom" do
-        subject.points[0] = [50, World::MAX_Y]
+        subject.points[0] = Point.new(50, World::MAX_Y)
         subject.possible_directions.should == [:left, :right]
       end
 
       it "can only go left when at the bottom and right edge" do
-        subject.points[0] = [World::MAX_X, World::MAX_Y]
+        subject.points[0] = Point.new(World::MAX_X, World::MAX_Y)
         subject.possible_directions.should == [:left]
       end
     end
@@ -38,7 +40,7 @@ describe Worm do
       end
 
       it "can only go right when at the top and left edge" do
-        subject.points[0] = [0, 0]
+        subject.points[0] = Point.new(0, 0)
         subject.possible_directions.should == [:right]
       end
     end
@@ -51,7 +53,7 @@ describe Worm do
       end
 
       it "can go up or down when at the right edge" do
-        subject.points[0] = [World::MAX_X, 20]
+        subject.points[0] = Point.new(World::MAX_X, 20)
         subject.possible_directions.should == [:up, :down]
       end
     end
@@ -64,51 +66,59 @@ describe Worm do
       end
 
       it "can only go up or left when at the bottom" do
-        subject.points[0] = [50, World::MAX_Y]
+        subject.points[0] = Point.new(50, World::MAX_Y)
         subject.possible_directions.should == [:up, :left]
       end
 
       it "can only go up when at the bottom and left edge" do
-        subject.points[0] = [0, World::MAX_Y]
+        subject.points[0] = Point.new(0, World::MAX_Y)
         subject.possible_directions.should == [:up]
       end
     end
   end
   
   describe "#live" do
+    it "does not do anything with zero days" do
+      subject.should_not_receive(:move)
+      subject.should_not_receive(:grow)
+      expect { subject.live(0) }.not_to change { subject.age }
+    end
+
     it "moves" do
       subject.should_receive(:move)
-      subject.live
+      subject.live(1)
+    end
+
+    it "moves once for each day" do
+      subject.should_receive(:move).exactly(3).times
+      subject.live(3)
     end
 
     it "gets older" do
-      expect { subject.live }.to change{ subject.age }.by(1)
+      expect { subject.live(5) }.to change{ subject.age }.by(5)
     end
 
     it "grows every 10 days" do
-     expect { 10.times { subject.live } }.to change{subject.points.size}.by(1)
-    end
-
-    it "returns the points" do
-      subject.live.should == subject.points
+     expect { subject.live(10) }.to change{subject.points.size}.by(1)
     end
 
     context "after 500 days" do
-      before { 500.times { subject.live} }
+      before { subject.live(500) }
 
       its(:age) { should == 500 }
       its(:points) { should have(40).items }
 
       it "doesn't have any negative coordinates" do
-        subject.points.flatten.each do |coord|
-          coord.should >= 0
+        subject.points.each do |point|
+          point.x.should >= 0
+          point.y.should >= 0
         end
       end
 
       it "doesn't have any out of limit coordinates" do
         subject.points.each do |point|
-          point[0].should <= World::MAX_X
-          point[1].should <= World::MAX_Y
+          point.x.should <= World::MAX_X
+          point.y.should <= World::MAX_Y
         end
       end
     end
@@ -178,7 +188,8 @@ describe Worm do
   end
 
   describe "#move_up" do
-    let(:worm) { Worm.new([100,200], :right) }
+    let(:worm) { Worm.new([initial_x, initial_y], :right) }
+
     before {
       worm.direction = :up
       worm.move_up
@@ -189,32 +200,38 @@ describe Worm do
     end
 
     it "moves the first point up the y axis" do
-      worm.head.should ==  [100, 199]
+      worm.head.x.should == initial_x
+      worm.head.y.should == initial_y - Worm::UNIT_SIZE
     end
 
     it "moves the second point where the first was" do
-      worm.points[1].should == [100, 200]
+      worm.points[1].x.should == initial_x
+      worm.points[1].y.should == initial_y
     end
   end
 
   describe "#move_down" do
-    let(:worm) { Worm.new([100,200], :right) }
+    let(:worm) { Worm.new([initial_x, initial_y], :right) }
+
     before {
       worm.direction = :down
       worm.move_down
     }
 
     it "moves the first point down the y axis" do
-      worm.head.should ==  [100, 201]
+      worm.head.x.should == initial_x
+      worm.head.y.should == initial_y + Worm::UNIT_SIZE
     end
 
     it "moves the second point where the first was" do
-      worm.points[1].should == [100, 200]
+      worm.points[1].x.should == initial_x
+      worm.points[1].y.should == initial_y
     end
   end
 
   describe "#move_left" do
-    let(:worm) { Worm.new([100,200], :down) }
+    let(:worm) { Worm.new([initial_x, initial_y], :down) }
+
     before {
       worm.direction = :left
       worm.move_left
@@ -225,16 +242,19 @@ describe Worm do
     end
 
     it "moves the first point left on the x axis" do
-      worm.head.should ==  [99, 200]
+      worm.head.x.should == initial_x - Worm::UNIT_SIZE
+      worm.head.y.should == initial_y
     end
 
     it "moves the second point where the first was" do
-      worm.points[1].should == [100, 200]
+      worm.points[1].x.should == initial_x
+      worm.points[1].y.should == initial_y
     end
   end
 
   describe "#move_right" do
-    let(:worm) { Worm.new([100,200], :up) }
+    let(:worm) { Worm.new([initial_x, initial_y], :down) }
+
     before {
       worm.direction = :right
       worm.move_right
@@ -245,11 +265,13 @@ describe Worm do
     end
 
     it "moves the first point left on the x axis" do
-      worm.head.should ==  [101, 200]
+      worm.head.x.should == initial_x + Worm::UNIT_SIZE
+      worm.head.y.should == initial_y
     end
 
     it "moves the second point where the first was" do
-      worm.points[1].should == [100, 200]
+      worm.points[1].x.should == initial_x
+      worm.points[1].y.should == initial_y
     end
   end
 
@@ -260,47 +282,78 @@ describe Worm do
 
     it "append appropriate coordinate point" do
       subject.grow
-      subject.points.last.should == [100, 204]
+      subject.tail.x.should == initial_x
+      subject.tail.y.should == (initial_y + 3) + Worm::UNIT_SIZE
     end
   end
 
   describe "#append_point" do
+    it "increases number of points" do
+      worm.append_point
+      worm.should have(5).points
+    end
+
     it "appends correctly for up direction" do
-      Worm.new([100, 200], :up).append_point.should == [100, 204]
+      worm = Worm.new([initial_x, initial_y], :up)
+      worm.append_point
+      worm.tail.x.should == initial_x
+      worm.tail.y.should == (initial_y + 3) + Worm::UNIT_SIZE
     end
 
     it "appends correctly for down direction" do
-      Worm.new([100, 200], :down).append_point.should == [100, 196]
+      worm = Worm.new([initial_x, initial_y], :down)
+      worm.append_point
+      worm.tail.x.should == initial_x
+      worm.tail.y.should == (initial_y - 3) - Worm::UNIT_SIZE
     end
 
     it "appends correctly for left direction" do
-      Worm.new([100, 200], :left).append_point.should == [104, 200]
+      worm = Worm.new([initial_x, initial_y], :left)
+      worm.append_point
+      worm.tail.x.should == (initial_x + 3) + Worm::UNIT_SIZE
+      worm.tail.y.should == initial_y
     end
 
     it "appends correctly for right direction" do
-      Worm.new([100, 200], :right).append_point.should == [96, 200]
+      worm = Worm.new([initial_x, initial_y], :right)
+      worm.append_point
+      worm.tail.x.should == (initial_x - 3) - Worm::UNIT_SIZE
+      worm.tail.y.should == initial_y
     end
   end
 
   describe "#prepend_point" do
+    it "adds a new point" do
+      subject.prepend_point
+      subject.should have(5).points
+    end
+
     it "prepends when moving up" do
       subject.direction = :up
-      subject.prepend_point.should == [100,199]
+      subject.prepend_point
+      worm.head.x.should == initial_x
+      worm.head.y.should == initial_y - Worm::UNIT_SIZE
     end
 
     it "prepends when moving down" do
       subject.direction = :down
-      subject.prepend_point.should == [100,201]
+      subject.prepend_point
+      worm.head.x.should == initial_x
+      worm.head.y.should == initial_y + Worm::UNIT_SIZE
     end
 
     it "prepends when moving right" do
       subject.direction = :right
-      subject.prepend_point.should == [101,200]
+      subject.prepend_point
+      worm.head.x.should == initial_x + Worm::UNIT_SIZE
+      worm.head.y.should == initial_y
     end
 
     it "prepends when moving left" do
       subject.direction = :left
-      subject.prepend_point.should == [99,200]
+      subject.prepend_point
+      worm.head.x.should == initial_x - Worm::UNIT_SIZE
+      worm.head.y.should == initial_y
     end
   end
 end
