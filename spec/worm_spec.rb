@@ -78,7 +78,7 @@ describe Worm do
   end
   
   describe "#live" do
-    it "does not do anything with zero days" do
+    it "does not do anything with zero ticks" do
       subject.should_not_receive(:move)
       subject.should_not_receive(:grow)
       expect { subject.live(0) }.not_to change { subject.age }
@@ -89,7 +89,7 @@ describe Worm do
       subject.live(1)
     end
 
-    it "moves once for each day" do
+    it "moves once for each tick" do
       subject.should_receive(:move).exactly(3).times
       subject.live(3)
     end
@@ -98,14 +98,14 @@ describe Worm do
       expect { subject.live(5) }.to change{ subject.age }.by(5)
     end
 
-    it "grows every 10 days" do
-     expect { subject.live(10) }.to change{subject.points.size}.by(1)
+    it "grows every 100 ticks" do
+     expect { subject.live(100) }.to change{subject.points.size}.by(1)
     end
 
-    context "after 500 days" do
-      before { subject.live(500) }
+    context "after 5000 ticks" do
+      before { subject.live(5000) }
 
-      its(:age) { should == 500 }
+      its(:age) { should == 5000 }
       its(:points) { should have(40).items }
 
       it "doesn't have any negative coordinates" do

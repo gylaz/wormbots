@@ -25,9 +25,10 @@ class Routes < Goliath::API
 	include Goliath::Rack::Templates
 	
 	# render static files from ./public
-	use(Rack::Static,
+	use(
+    Rack::Static,
 		:root => Goliath::Application.app_path('public'),
-		:urls => ['/stylesheets', '/javascripts'])
+		:urls => ['/stylesheets', '/javascripts', '/images'])
 		# :urls => ['/favicon.ico', '/stylesheets', '/javascripts', '/images'])
 
 	get '/world', Server

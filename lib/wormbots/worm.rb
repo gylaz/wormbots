@@ -100,6 +100,6 @@ class Worm
   private
 
   def time_to_grow?
-    @age % 10 == 0 && points.size < MAX_SIZE
+    @age % 100 == 0 && points.size < MAX_SIZE
   end
 end

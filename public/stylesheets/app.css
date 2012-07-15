@@ -1,5 +1,5 @@
 body {
-  background-color: #6c6;
+  background: #6c6 url("../images/grass.jpg") repeat;
 }
 h1 {
   text-align: center;
@@ -9,7 +9,7 @@ h1 {
   margin: 0 auto;
   width: 640px;
   height: 480px;
-  border: 2px solid black;
+  border: 2px solid #000;
   background-color: #5C1F00;
   border-radius: 5x;
   -moz-border-radius: 5px;
@@ -25,4 +25,5 @@ h1 {
 
 #world .head {
   background-color: #260506;
+  z-index: 1;
 }
