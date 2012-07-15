@@ -3,6 +3,8 @@ class World
   MAX_X = 640 - 4 # horizontal limit
   MAX_Y = 480 - 4 # vertical limit
 
+  attr_reader :worms
+
   def initialize
     @worms = []
     10.times { spawn_worm }

@@ -1,14 +1,17 @@
 class Worm
   UNIT_SIZE = 1
   MAX_SIZE = 40
-  CARDINALITY = { up:    { x: 0,  y: -1 },
-                  down:  { x: 0,  y: 1 },
-                  left:  { x: -1, y: 0 },
-                  right: { x: 1,  y: 0 } }
+  CARDINALITY = {
+    up:    { x: 0,  y: -1 },
+    down:  { x: 0,  y: 1 },
+    left:  { x: -1, y: 0 },
+    right: { x: 1,  y: 0 }
+  }
 
   attr_accessor :points, :direction, :age
 
   def initialize(starting_coords, direction)
+    @alive = true
     @age = 0
     @direction = direction
     @points = [Point.new(*starting_coords)]
@@ -17,9 +20,21 @@ class Worm
 
   def live(days)
     days.times do
-      @age += 1
-      grow if time_to_grow?
-      move
+      if alive?
+        self.age += 1
+
+        if time_to_die?
+          die
+        elsif time_to_grow?
+          grow
+          move
+        else
+          move
+        end
+      else
+        @cleanup_time += 1
+        cleanup_dead_body if @cleanup_time >= 20
+      end
     end
   end
 
@@ -34,7 +49,7 @@ class Worm
 
   def weighted_possibilities
     if possible_directions.include? @direction
-      possible_directions + 10.times.map { @direction }
+      possible_directions + 15.times.map { @direction }
     else
       possible_directions
     end
@@ -42,6 +57,15 @@ class Worm
 
   def grow
     append_point
+  end
+
+  def die
+    @alive = false
+    @cleanup_time = 0
+  end
+
+  def alive?
+    @alive
   end
 
   def possible_directions
@@ -99,7 +123,15 @@ class Worm
 
   private
 
+  def cleanup_dead_body
+    $world.worms.delete(self)
+  end
+
+  def time_to_die?
+    points.size >= MAX_SIZE
+  end
+
   def time_to_grow?
-    @age % 100 == 0 && points.size < MAX_SIZE
+    @age % 10 == 0 && points.size < MAX_SIZE
   end
 end

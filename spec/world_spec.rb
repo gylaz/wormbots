@@ -80,5 +80,4 @@ describe World do
       World.restricted_directions(Point.new(636,476)).should == [:right, :down]
     end
   end
-
 end

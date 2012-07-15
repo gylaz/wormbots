@@ -5,6 +5,8 @@ describe Worm do
   let(:initial_y) { 200 }
   let(:worm) { Worm.new([initial_x, initial_y], :up) }
 
+  before { worm.stub(:cleanup_dead_body) }
+
   subject { worm }
   its(:points) { should have(4).items }
   its(:direction) { should == :up }
@@ -98,15 +100,19 @@ describe Worm do
       expect { subject.live(5) }.to change{ subject.age }.by(5)
     end
 
-    it "grows every 100 ticks" do
-     expect { subject.live(100) }.to change{subject.points.size}.by(1)
+    it "grows every 10 ticks" do
+     expect { subject.live(10) }.to change{subject.points.size}.by(1)
     end
 
-    context "after 5000 ticks" do
-      before { subject.live(5000) }
+    context "after 500 ticks" do
+      before { subject.live(500) }
 
-      its(:age) { should == 5000 }
+      its(:age) { should == 361 }
       its(:points) { should have(40).items }
+
+      it "is dead" do
+        subject.should_not be_alive
+      end
 
       it "doesn't have any negative coordinates" do
         subject.points.each do |point|
@@ -284,6 +290,20 @@ describe Worm do
       subject.grow
       subject.tail.x.should == initial_x
       subject.tail.y.should == (initial_y + 3) + Worm::UNIT_SIZE
+    end
+  end
+
+  describe "#die" do
+
+    it "is not alive after dying" do
+      subject.die
+      subject.should_not be_alive
+    end
+
+    it "removes the worm form the world after some time" do
+      subject.die
+      subject.should_receive(:cleanup_dead_body)
+      subject.live(20)
     end
   end
 
