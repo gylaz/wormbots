@@ -1,12 +1,6 @@
 class Worm
   UNIT_SIZE = 1
-  MAX_SIZE = 40
-  CARDINALITY = {
-    up:    { x: 0,  y: -1 },
-    down:  { x: 0,  y: 1 },
-    left:  { x: -1, y: 0 },
-    right: { x: 1,  y: 0 }
-  }
+  MAX_SIZE = 60
 
   attr_accessor :points, :direction, :age
 
@@ -25,10 +19,9 @@ class Worm
 
         if time_to_die?
           die
-        elsif time_to_grow?
-          grow
-          move
         else
+          mate if eligible_for_mating?
+          grow if time_to_grow?
           move
         end
       else
@@ -64,8 +57,23 @@ class Worm
     @cleanup_time = 0
   end
 
+  def mate
+    @mating_cooldown = 20 # 2 seconds
+    at_coords = ::Geometry.worm_intersection($world, self).first
+    rand(4).times { $world.spawn_worm(at_coords) }
+  end
+
   def alive?
     @alive
+  end
+
+  def eligible_for_mating?
+    if @mating_cooldown && @mating_cooldown > 0
+      @mating_cooldown -= 1
+      false
+    else
+      size >= 18 && ::Geometry.worm_intersection_exists?($world, self)
+    end
   end
 
   def possible_directions
@@ -79,11 +87,11 @@ class Worm
     when :right
       restrictions = [:left]
     end
-    ::World::DIRECTIONS - restrictions - ::World.restricted_directions(head)
+    ::Geometry::DIRECTIONS - restrictions - ::Geometry.restricted_directions(head)
   end
 
   def math
-    CARDINALITY[direction.to_sym]
+    ::Geometry::CARDINALITY[direction.to_sym]
   end
 
   def append_point
@@ -114,7 +122,7 @@ class Worm
     [:up, :down].include?(direction)
   end
 
-  ::World::DIRECTIONS.each do |direction|
+  ::Geometry::DIRECTIONS.each do |direction|
     define_method "move_#{direction}" do
       prepend_point
       points.pop
@@ -128,10 +136,14 @@ class Worm
   end
 
   def time_to_die?
-    points.size >= MAX_SIZE
+    size >= MAX_SIZE
   end
 
   def time_to_grow?
-    @age % 10 == 0 && points.size < MAX_SIZE
+    @age % 100 == 0 && size < MAX_SIZE
+  end
+
+  def size
+    points.size
   end
 end

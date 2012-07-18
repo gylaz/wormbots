@@ -5,7 +5,10 @@ describe Worm do
   let(:initial_y) { 200 }
   let(:worm) { Worm.new([initial_x, initial_y], :up) }
 
-  before { worm.stub(:cleanup_dead_body) }
+  before do
+    worm.stub(:cleanup_dead_body)
+    $world = double(spawn_worm: nil, worms: [subject, subject.dup])
+  end
 
   subject { worm }
   its(:points) { should have(4).items }
@@ -24,12 +27,12 @@ describe Worm do
       end
 
       it "can only go left or right when at the bottom" do
-        subject.points[0] = Point.new(50, World::MAX_Y)
+        subject.points[0] = Point.new(50, Geometry::MAX_Y)
         subject.possible_directions.should == [:left, :right]
       end
 
       it "can only go left when at the bottom and right edge" do
-        subject.points[0] = Point.new(World::MAX_X, World::MAX_Y)
+        subject.points[0] = Point.new(Geometry::MAX_X, Geometry::MAX_Y)
         subject.possible_directions.should == [:left]
       end
     end
@@ -55,7 +58,7 @@ describe Worm do
       end
 
       it "can go up or down when at the right edge" do
-        subject.points[0] = Point.new(World::MAX_X, 20)
+        subject.points[0] = Point.new(Geometry::MAX_X, 20)
         subject.possible_directions.should == [:up, :down]
       end
     end
@@ -68,12 +71,12 @@ describe Worm do
       end
 
       it "can only go up or left when at the bottom" do
-        subject.points[0] = Point.new(50, World::MAX_Y)
+        subject.points[0] = Point.new(50, Geometry::MAX_Y)
         subject.possible_directions.should == [:up, :left]
       end
 
       it "can only go up when at the bottom and left edge" do
-        subject.points[0] = Point.new(0, World::MAX_Y)
+        subject.points[0] = Point.new(0, Geometry::MAX_Y)
         subject.possible_directions.should == [:up]
       end
     end
@@ -100,15 +103,18 @@ describe Worm do
       expect { subject.live(5) }.to change{ subject.age }.by(5)
     end
 
-    it "grows every 10 ticks" do
-     expect { subject.live(10) }.to change{subject.points.size}.by(1)
+    it "grows every 100 ticks" do
+     expect { subject.live(100) }.to change{subject.points.size}.by(1)
     end
 
-    context "after 500 ticks" do
-      before { subject.live(500) }
+    context "after 7000 ticks" do
+      before do
+        Geometry.stub(:worm_intersection_exists?).and_return(false)
+        subject.live(7000)
+      end
 
-      its(:age) { should == 361 }
-      its(:points) { should have(40).items }
+      its(:age) { should == 5601 }
+      its(:points) { should have(60).items }
 
       it "is dead" do
         subject.should_not be_alive
@@ -123,10 +129,46 @@ describe Worm do
 
       it "doesn't have any out of limit coordinates" do
         subject.points.each do |point|
-          point.x.should <= World::MAX_X
-          point.y.should <= World::MAX_Y
+          point.x.should <= Geometry::MAX_X
+          point.y.should <= Geometry::MAX_Y
         end
       end
+    end
+  end
+
+  describe "#eligible_for_mating?" do
+    before do
+      Geometry.stub(:worm_intersection_exists?).and_return(true)
+    end
+
+    it "is not eligible for mating if too small" do
+      13.times { subject.grow }
+      subject.should_not be_eligible_for_mating
+    end
+
+    it "is eligible for mating if appropriate size" do
+      14.times { subject.grow }
+      subject.should be_eligible_for_mating
+    end
+
+    it "cannot mate if not crossing another worm" do
+      Geometry.stub(:worm_intersection_exists?).and_return(false)
+      14.times { subject.grow }
+      subject.should_not be_eligible_for_mating
+    end
+
+    it "cannot mate 5 ticks after mating" do
+      14.times { subject.grow }
+      subject.should be_eligible_for_mating
+      subject.mate
+      subject.should_not be_eligible_for_mating
+    end
+  end
+
+  describe "#mate" do
+    it "spaws more worms" do
+      $world.should_receive(:spawn_worm)
+      subject.mate
     end
   end
 
@@ -138,7 +180,7 @@ describe Worm do
 
     context "when moving up" do
       it "moves left when at the top right corner" do
-        worm = Worm.new([World::MAX_X,0], :up)
+        worm = Worm.new([Geometry::MAX_X,0], :up)
         worm.should_receive(:move_left)
         worm.move
       end
@@ -152,13 +194,13 @@ describe Worm do
 
     context "when moving down" do
       it "moves left when at the bottom right corner" do
-        worm = Worm.new([World::MAX_X,World::MAX_Y], :down)
+        worm = Worm.new([Geometry::MAX_X,Geometry::MAX_Y], :down)
         worm.should_receive(:move_left)
         worm.move
       end
 
       it "moves right when at the bottom left corner" do
-        worm = Worm.new([0,World::MAX_Y], :down)
+        worm = Worm.new([0,Geometry::MAX_Y], :down)
         worm.should_receive(:move_right)
         worm.move
       end
@@ -172,7 +214,7 @@ describe Worm do
       end
 
       it "moves right when at the bottom left corner" do
-        worm = Worm.new([0,World::MAX_Y], :left)
+        worm = Worm.new([0,Geometry::MAX_Y], :left)
         worm.should_receive(:move_up)
         worm.move
       end
@@ -180,13 +222,13 @@ describe Worm do
 
     context "when moving right" do
       it "moves left when at the bottom right corner" do
-        worm = Worm.new([World::MAX_X,World::MAX_Y], :right)
+        worm = Worm.new([Geometry::MAX_X,Geometry::MAX_Y], :right)
         worm.should_receive(:move_up)
         worm.move
       end
 
       it "moves right when at the top right corner" do
-        worm = Worm.new([World::MAX_X,0], :right)
+        worm = Worm.new([Geometry::MAX_X,0], :right)
         worm.should_receive(:move_down)
         worm.move
       end
@@ -294,7 +336,6 @@ describe Worm do
   end
 
   describe "#die" do
-
     it "is not alive after dying" do
       subject.die
       subject.should_not be_alive

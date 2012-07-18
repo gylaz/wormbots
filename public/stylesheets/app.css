@@ -18,8 +18,8 @@ h1 {
 
 #world .point {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 2px;
+  height: 2px;
   background-color: #c96064;
 }
 
