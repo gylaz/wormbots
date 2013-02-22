@@ -1,11 +1,10 @@
-$(document).ready(function() {
-  var source = new EventSource('/world');
+$(function() {
+  var socket = new WebSocket('ws://localhost:9000/world');
 
-  source.addEventListener('open', function(e) {
-    console.log('connection opened');
-  }, false);
+  socket.onopen = function() { console.log('connection opened'); };
+  socket.onclose = function() { console.log('connection opened'); };
 
-  source.onmessage = function(e) {
+  socket.onmessage = function(e) {
     $('#world').empty();
 
     worms = $.parseJSON(e.data);
@@ -13,18 +12,12 @@ $(document).ready(function() {
       draw_worm(worm);
     });
   };
-
-  source.addEventListener('error', function(e) {
-    if (e.eventPhase == EventSource.CLOSED) {
-      console.log('connection closed');
-    }
-  }, false);
 });
 
 function draw_worm(points) {
   $.each(points, function(i, point) {
     //console.log(point);
-    
+
     x = point[0];
     y = point[1];
     if (i == 0) {
