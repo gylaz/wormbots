@@ -11,7 +11,8 @@ module Geometry
 
   def self.worm_intersection(world, worm)
     worms = world.worms - [ worm ]
-    worms.map(&:points).flatten.map {|p| [p.x, p.y] } & worm.points.map {|p| [p.x, p.y] }
+    all_worms_points = worms.map(&:points).flatten.map {|p| [p.x, p.y] }
+    all_worms_points & worm.points.map {|p| [p.x, p.y] }
   end
 
   def self.worm_intersection_exists?(world, worm)

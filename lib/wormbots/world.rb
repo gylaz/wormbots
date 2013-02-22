@@ -17,7 +17,8 @@ class World
   end
 
   def spawn_worm(coords = nil)
-    @worms << Worm.new(coords || Geometry.random_point, Geometry.random_direction)
+    coordinates = coords || Geometry.random_point
+    @worms << Worm.new(self, coordinates, Geometry.random_direction)
   end
 
   def tick

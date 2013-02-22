@@ -81,7 +81,7 @@ describe Worm do
       end
     end
   end
-  
+
   describe "#live" do
     it "does not do anything with zero ticks" do
       subject.should_not_receive(:move)
