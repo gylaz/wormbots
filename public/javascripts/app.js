@@ -1,5 +1,6 @@
 $(function() {
-  var socket = new WebSocket('ws://localhost:9000/world');
+  var socketUrl = 'ws://' + window.location.host + '/world';
+  var socket = new WebSocket(socketUrl);
 
   socket.onopen = function() { console.log('connection opened'); };
   socket.onclose = function() { console.log('connection opened'); };
