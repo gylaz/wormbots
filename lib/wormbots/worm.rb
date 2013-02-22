@@ -4,7 +4,8 @@ class Worm
 
   attr_accessor :points, :direction, :age
 
-  def initialize(starting_coords, direction)
+  def initialize(world, starting_coords, direction)
+    @world = world
     @alive = true
     @age = 0
     @direction = direction
@@ -59,8 +60,8 @@ class Worm
 
   def mate
     @mating_cooldown = 20 # 2 seconds
-    at_coords = ::Geometry.worm_intersection($world, self).first
-    rand(4).times { $world.spawn_worm(at_coords) }
+    at_coords = ::Geometry.worm_intersection(@world, self).first
+    rand(1..4).times { @world.spawn_worm(at_coords) }
   end
 
   def alive?
@@ -72,7 +73,7 @@ class Worm
       @mating_cooldown -= 1
       false
     else
-      size >= 18 && ::Geometry.worm_intersection_exists?($world, self)
+      size >= 18 && ::Geometry.worm_intersection_exists?(@world, self)
     end
   end
 
@@ -132,7 +133,7 @@ class Worm
   private
 
   def cleanup_dead_body
-    $world.worms.delete(self)
+    @world.worms.delete(self)
   end
 
   def time_to_die?

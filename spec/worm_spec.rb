@@ -3,12 +3,8 @@ require 'wormbots'
 describe Worm do
   let(:initial_x) { 100 }
   let(:initial_y) { 200 }
-  let(:worm) { Worm.new([initial_x, initial_y], :up) }
-
-  before do
-    worm.stub(:cleanup_dead_body)
-    $world = double(spawn_worm: nil, worms: [subject, subject.dup])
-  end
+  let(:world) { World.new }
+  let(:worm) { Worm.new(world, [initial_x, initial_y], :up) }
 
   subject { worm }
   its(:points) { should have(4).items }
@@ -167,8 +163,11 @@ describe Worm do
 
   describe "#mate" do
     it "spaws more worms" do
-      $world.should_receive(:spawn_worm)
-      subject.mate
+      world.worms.clear
+      world.spawn_worm([initial_x, initial_y])
+      world.should_receive(:spawn_worm).at_least(:once)
+
+      worm.mate
     end
   end
 
@@ -180,13 +179,13 @@ describe Worm do
 
     context "when moving up" do
       it "moves left when at the top right corner" do
-        worm = Worm.new([Geometry::MAX_X,0], :up)
+        worm = Worm.new(world, [Geometry::MAX_X,0], :up)
         worm.should_receive(:move_left)
         worm.move
       end
 
       it "moves right when at the top left corner" do
-        worm = Worm.new([0,0], :up)
+        worm = Worm.new(world, [0,0], :up)
         worm.should_receive(:move_right)
         worm.move
       end
@@ -194,13 +193,13 @@ describe Worm do
 
     context "when moving down" do
       it "moves left when at the bottom right corner" do
-        worm = Worm.new([Geometry::MAX_X,Geometry::MAX_Y], :down)
+        worm = Worm.new(world, [Geometry::MAX_X,Geometry::MAX_Y], :down)
         worm.should_receive(:move_left)
         worm.move
       end
 
       it "moves right when at the bottom left corner" do
-        worm = Worm.new([0,Geometry::MAX_Y], :down)
+        worm = Worm.new(world, [0,Geometry::MAX_Y], :down)
         worm.should_receive(:move_right)
         worm.move
       end
@@ -208,13 +207,13 @@ describe Worm do
 
     context "when moving left" do
       it "moves left when at the top left corner" do
-        worm = Worm.new([0, 0], :left)
+        worm = Worm.new(world, [0, 0], :left)
         worm.should_receive(:move_down)
         worm.move
       end
 
       it "moves right when at the bottom left corner" do
-        worm = Worm.new([0,Geometry::MAX_Y], :left)
+        worm = Worm.new(world, [0,Geometry::MAX_Y], :left)
         worm.should_receive(:move_up)
         worm.move
       end
@@ -222,13 +221,13 @@ describe Worm do
 
     context "when moving right" do
       it "moves left when at the bottom right corner" do
-        worm = Worm.new([Geometry::MAX_X,Geometry::MAX_Y], :right)
+        worm = Worm.new(world, [Geometry::MAX_X,Geometry::MAX_Y], :right)
         worm.should_receive(:move_up)
         worm.move
       end
 
       it "moves right when at the top right corner" do
-        worm = Worm.new([Geometry::MAX_X,0], :right)
+        worm = Worm.new(world, [Geometry::MAX_X,0], :right)
         worm.should_receive(:move_down)
         worm.move
       end
@@ -236,7 +235,7 @@ describe Worm do
   end
 
   describe "#move_up" do
-    let(:worm) { Worm.new([initial_x, initial_y], :right) }
+    let(:worm) { Worm.new(world, [initial_x, initial_y], :right) }
 
     before {
       worm.direction = :up
@@ -259,7 +258,7 @@ describe Worm do
   end
 
   describe "#move_down" do
-    let(:worm) { Worm.new([initial_x, initial_y], :right) }
+    let(:worm) { Worm.new(world, [initial_x, initial_y], :right) }
 
     before {
       worm.direction = :down
@@ -278,7 +277,7 @@ describe Worm do
   end
 
   describe "#move_left" do
-    let(:worm) { Worm.new([initial_x, initial_y], :down) }
+    let(:worm) { Worm.new(world, [initial_x, initial_y], :down) }
 
     before {
       worm.direction = :left
@@ -301,7 +300,7 @@ describe Worm do
   end
 
   describe "#move_right" do
-    let(:worm) { Worm.new([initial_x, initial_y], :down) }
+    let(:worm) { Worm.new(world, [initial_x, initial_y], :down) }
 
     before {
       worm.direction = :right
@@ -355,28 +354,28 @@ describe Worm do
     end
 
     it "appends correctly for up direction" do
-      worm = Worm.new([initial_x, initial_y], :up)
+      worm = Worm.new(world, [initial_x, initial_y], :up)
       worm.append_point
       worm.tail.x.should == initial_x
       worm.tail.y.should == (initial_y + 3) + Worm::UNIT_SIZE
     end
 
     it "appends correctly for down direction" do
-      worm = Worm.new([initial_x, initial_y], :down)
+      worm = Worm.new(world, [initial_x, initial_y], :down)
       worm.append_point
       worm.tail.x.should == initial_x
       worm.tail.y.should == (initial_y - 3) - Worm::UNIT_SIZE
     end
 
     it "appends correctly for left direction" do
-      worm = Worm.new([initial_x, initial_y], :left)
+      worm = Worm.new(world, [initial_x, initial_y], :left)
       worm.append_point
       worm.tail.x.should == (initial_x + 3) + Worm::UNIT_SIZE
       worm.tail.y.should == initial_y
     end
 
     it "appends correctly for right direction" do
-      worm = Worm.new([initial_x, initial_y], :right)
+      worm = Worm.new(world, [initial_x, initial_y], :right)
       worm.append_point
       worm.tail.x.should == (initial_x - 3) - Worm::UNIT_SIZE
       worm.tail.y.should == initial_y

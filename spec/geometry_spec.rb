@@ -2,9 +2,9 @@ require 'wormbots'
 
 describe Geometry do
   let(:world) { World.new }
-  let(:worm1) { Worm.new([2, 2], :up) }
-  let(:worm2) { Worm.new([200, 2], :down) }
-  let(:worm3) { Worm.new([2, 2], :left) }
+  let(:worm1) { Worm.new(world, [2, 2], :up) }
+  let(:worm2) { Worm.new(world, [200, 2], :down) }
+  let(:worm3) { Worm.new(world, [2, 2], :left) }
 
   before { world.worms.clear }
 
