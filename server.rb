@@ -2,13 +2,11 @@
 $:.unshift File.expand_path(File.dirname(__FILE__) + '/lib')
 
 require 'goliath'
-require 'goliath/websocket'
-require 'tilt'
 require 'json'
 require 'haml'
 require 'wormbots'
 
-class Server < Goliath::WebSocket
+class Server < Goliath::API
   # render templated files from ./views
   include Goliath::Rack::Templates
 
@@ -17,23 +15,15 @@ class Server < Goliath::WebSocket
     :root => Goliath::Application.app_path('public'),
     :urls => ['/stylesheets', '/javascripts', '/images']
 
-  def on_open(env)
-    env.logger.info('Connection open')
-    env['subscription'] = env.channel.subscribe { |m| env.stream_send(m) }
-  end
-
-  def on_message(env, message)
-    env.logger.info("Message: #{message}")
-    env.channel << message
-  end
-
   def on_close(env)
-    env.logger.info('Connection closed')
-    env.channel.unsubscribe(env['subscription'])
+    if env['subscription']
+      env.logger.info('Connection closed')
+      env.channel.unsubscribe(env['subscription'])
+    end
   end
 
   def on_error(env, error)
-    env.logger.error error
+    env.logger.error(error)
   end
 
   def response(env)
@@ -41,7 +31,11 @@ class Server < Goliath::WebSocket
     when '/'
       [200, {}, haml(:index)]
     when '/world'
-      super(env)
+      env['subscription'] = env.channel.subscribe do |message|
+        env.stream_send("data: #{message.to_json}\n\n")
+      end
+
+      streaming_response(200, {'Content-Type' => 'text/event-stream'})
     end
   end
 end

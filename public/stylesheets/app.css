@@ -9,11 +9,12 @@ h1 {
   margin: 0 auto;
   width: 640px;
   height: 480px;
-  border: 2px solid #000;
-  background-color: #630;
+  border: 1px solid #000;
+  background-color: #673520;
   border-radius: 5x;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
+  box-shadow: 8px 8px 15px #000;
 }
 
 #world .point {
