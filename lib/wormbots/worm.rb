@@ -74,7 +74,8 @@ class Worm
     if match
       coords = Geometry.intersection_between_worms(self, match)
       rand(1..4).times { @world.spawn_worm(coords) }
-      @mating_cooldown = 20
+      match.defertilize
+      defertilize
     end
   end
 
@@ -146,6 +147,10 @@ class Worm
 
   def adult?
     size >= MATING_AGE
+  end
+
+  def defertilize
+    @mating_cooldown = 200
   end
 
   private

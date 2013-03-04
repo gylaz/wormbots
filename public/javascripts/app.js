@@ -9,16 +9,16 @@ $(function() {
   source.onmessage = function(e) {
     $('#world').empty();
 
-    var points = $.parseJSON(e.data);
-    $('#stats #worms .counter').text(points.length);
-    $.each(points, function(i, worm) {
+    var worms = $.parseJSON(e.data);
+    $('#stats #worms .counter').text(worms.length);
+    $.each(worms, function(i, worm) {
       draw_worm(worm);
     });
   };
 });
 
-function draw_worm(points) {
-  $.each(points, function(i, point) {
+function draw_worm(worm) {
+  $.each(worm.points, function(i, point) {
     var element;
     var x = point[0];
     var y = point[1];
@@ -28,6 +28,10 @@ function draw_worm(points) {
     }
     else {
       element = $('<div class="point"></div>');
+
+      if (worm.fertile) {
+        element.addClass('fertile');
+      }
     }
 
     element.css({top: y, left: x}).appendTo('#world');

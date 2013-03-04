@@ -1,7 +1,7 @@
 !!!
 %html
   %head
-    %title Wormbots - Happy worm farm!
+    %title Wormbots - Automated worm farm
     %link{:href => "/stylesheets/app.css", :rel => "stylesheet", :type => "text/css"}
     %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js",
       :type => "text/javascript"}
@@ -9,11 +9,11 @@
     %script{:src => "/javascripts/jquery.timeago.js", :type => "text/javascript"}
 
   %body
-    %h1 Happy wormbots farm
+    %h1 Automated worm farm
     #stats
       #worms
         %span.counter
-        worms are alive and happy
+        wormbots are alive and happy
       #time
         %span.timeago(title=@start_time)= @start_time
     #world

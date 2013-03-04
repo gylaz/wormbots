@@ -19,6 +19,8 @@ class World
   end
 
   def data_points
-    @worms.map { |worm| worm.coordinates }
+    @worms.map do |worm|
+      { fertile: worm.fertile?, points: worm.coordinates }
+    end
   end
 end
