@@ -1,17 +1,17 @@
 $(function() {
   $.timeago.settings.strings.suffixAgo = 'since the world began';
-  var source = new EventSource('/world');
+  $('.timeago').timeago();
 
+  var source = new EventSource('/world');
   source.onopen = function() { console.log('connection opened'); };
   source.onclose = function() { console.log('connection opened'); };
 
   source.onmessage = function(e) {
     $('#world').empty();
 
-    var data = $.parseJSON(e.data);
-    $('#stats #time .counter').text($.timeago(data.start_time));
-    $('#stats #worms .counter').text(data.points.length);
-    $.each(data.points, function(i, worm) {
+    var points = $.parseJSON(e.data);
+    $('#stats #worms .counter').text(points.length);
+    $.each(points, function(i, worm) {
       draw_worm(worm);
     });
   };

@@ -1,5 +1,11 @@
 body {
   background: #6c6 url("../images/grass.jpg") repeat;
+  opacity: 0.8;
+}
+h1 {
+  text-align: center;
+  margin: 0;
+  opacity: 0.8;
 }
 #world {
   position: relative;
@@ -11,7 +17,6 @@ body {
   border-radius: 5x;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
-  opacity: 0.8;
 }
 
 #world .point {

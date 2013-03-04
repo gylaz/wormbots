@@ -9,10 +9,11 @@
     %script{:src => "/javascripts/jquery.timeago.js", :type => "text/javascript"}
 
   %body
+    %h1 Happy wormbots farm
     #stats
       #worms
         %span.counter
         worms are alive and happy
       #time
-        %span.counter
+        %span.timeago(title=@start_time)= @start_time
     #world

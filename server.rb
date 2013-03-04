@@ -29,6 +29,7 @@ class Server < Goliath::API
   def response(env)
     case env['REQUEST_PATH']
     when '/'
+      @start_time = Time.at(config['start_time']).iso8601
       [200, {}, haml(:index)]
     when '/world'
       env['subscription'] = env.channel.subscribe do |message|
