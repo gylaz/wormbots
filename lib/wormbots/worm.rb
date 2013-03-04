@@ -1,6 +1,7 @@
 class Worm
   UNIT_SIZE = 1
   MAX_SIZE = 60
+  MATING_AGE = 18
 
   attr_accessor :points, :direction, :age
 
@@ -21,8 +22,10 @@ class Worm
         if time_to_die?
           die
         else
-          mate if eligible_for_mating?
-          grow if time_to_grow?
+          attempt_to_mate
+          if time_to_grow?
+            grow
+          end
           move
         end
       else
@@ -58,22 +61,29 @@ class Worm
     @cleanup_time = 0
   end
 
+  def attempt_to_mate
+    if fertile?
+      mate
+    end
+  end
+
   def mate
-    @mating_cooldown = 20 # 2 seconds
-    at_coords = ::Geometry.worm_intersection(@world, self).first
-    rand(1..4).times { @world.spawn_worm(at_coords) }
+    potential_matches = Geometry.intersecting_worms(@world, self)
+    match = potential_matches.detect { |worm| worm.fertile? }
+
+    if match
+      coords = Geometry.intersection_between_worms(self, match)
+      rand(1..4).times { @world.spawn_worm(coords) }
+      @mating_cooldown = 20
+    end
   end
 
-  def alive?
-    @alive
-  end
-
-  def eligible_for_mating?
+  def fertile?
     if @mating_cooldown && @mating_cooldown > 0
       @mating_cooldown -= 1
       false
     else
-      size >= 18 && ::Geometry.worm_intersection_exists?(@world, self)
+      alive? && adult?
     end
   end
 
@@ -128,6 +138,14 @@ class Worm
       prepend_point
       points.pop
     end
+  end
+
+  def alive?
+    @alive
+  end
+
+  def adult?
+    size >= MATING_AGE
   end
 
   private

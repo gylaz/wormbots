@@ -1,14 +1,17 @@
 class World
-  attr_reader :worms
+  attr_reader :worms, :start_time
 
   def initialize
+    @start_time = Time.now
     @worms = []
     10.times { spawn_worm }
   end
 
   def spawn_worm(coords = nil)
     coordinates = coords || Geometry.random_point
-    @worms << Worm.new(self, coordinates, Geometry.random_direction)
+    worm = Worm.new(self, coordinates, Geometry.random_direction)
+    @worms << worm
+    worm
   end
 
   def tick

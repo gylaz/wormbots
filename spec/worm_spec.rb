@@ -105,26 +105,25 @@ describe Worm do
 
     context "after 7000 ticks" do
       before do
-        Geometry.stub(:worm_intersection_exists?).and_return(false)
-        subject.live(7000)
+        worm.live(7000)
       end
 
       its(:age) { should == 5601 }
       its(:points) { should have(60).items }
 
       it "is dead" do
-        subject.should_not be_alive
+        worm.should_not be_alive
       end
 
       it "doesn't have any negative coordinates" do
-        subject.points.each do |point|
+        worm.points.each do |point|
           point.x.should >= 0
           point.y.should >= 0
         end
       end
 
       it "doesn't have any out of limit coordinates" do
-        subject.points.each do |point|
+        worm.points.each do |point|
           point.x.should <= Geometry::MAX_X
           point.y.should <= Geometry::MAX_Y
         end
@@ -132,42 +131,62 @@ describe Worm do
     end
   end
 
-  describe "#eligible_for_mating?" do
-    before do
-      Geometry.stub(:worm_intersection_exists?).and_return(true)
+  describe "#fertile?" do
+    it "is true if appropriate size" do
+      worm.stub(adult?: true)
+
+      worm.should be_fertile
     end
 
-    it "is not eligible for mating if too small" do
-      13.times { subject.grow }
-      subject.should_not be_eligible_for_mating
+    it "is false if not adult" do
+      worm.stub(adult?: false)
+
+      worm.should_not be_fertile
     end
 
-    it "is eligible for mating if appropriate size" do
-      14.times { subject.grow }
-      subject.should be_eligible_for_mating
-    end
+    it "is false while in mating cooldown" do
+      partner = world.spawn_worm([initial_x, initial_y])
+      partner.stub(adult?: true)
+      worm.stub(adult?: true)
 
-    it "cannot mate if not crossing another worm" do
-      Geometry.stub(:worm_intersection_exists?).and_return(false)
-      14.times { subject.grow }
-      subject.should_not be_eligible_for_mating
-    end
+      worm.mate
 
-    it "cannot mate 5 ticks after mating" do
-      14.times { subject.grow }
-      subject.should be_eligible_for_mating
-      subject.mate
-      subject.should_not be_eligible_for_mating
+      worm.should_not be_fertile
     end
   end
 
   describe "#mate" do
     it "spaws more worms" do
       world.worms.clear
-      world.spawn_worm([initial_x, initial_y])
-      world.should_receive(:spawn_worm).at_least(:once)
+      worm.stub(adult?: true)
+      partner = world.spawn_worm([initial_x, initial_y])
+      partner.stub(adult?: true)
 
-      worm.mate
+      expect {
+        worm.mate
+      }.to change { world.worms.size }
+    end
+
+    it "cannot mate if parner is not an adult" do
+      partner = world.spawn_worm([initial_x, initial_y])
+      worm.stub(adult?: true)
+
+      expect {
+        worm.mate
+      }.not_to change { world.worms.size }
+    end
+
+    it "cannot mate if parner is in cooldown" do
+      world.worms.clear
+      world.worms << worm
+      partner = world.spawn_worm([initial_x, initial_y])
+      partner.stub(adult?: true)
+      worm.stub(adult?: true)
+      partner.mate
+
+      expect {
+        worm.mate
+      }.not_to change { world.worms.size }
     end
   end
 

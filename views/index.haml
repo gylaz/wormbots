@@ -1,12 +1,18 @@
 !!!
 %html
   %head
-    %title Wormbots
+    %title Wormbots - Happy worm farm!
     %link{:href => "/stylesheets/app.css", :rel => "stylesheet", :type => "text/css"}
     %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js",
       :type => "text/javascript"}
     %script{:src => "/javascripts/app.js", :type => "text/javascript"}
+    %script{:src => "/javascripts/jquery.timeago.js", :type => "text/javascript"}
 
   %body
-    %h1 Welcome to the Farm!
+    #stats
+      #worms
+        %span.counter
+        worms are alive and happy
+      #time
+        %span.counter
     #world

@@ -1,9 +1,6 @@
 body {
   background: #6c6 url("../images/grass.jpg") repeat;
 }
-h1 {
-  text-align: center;
-}
 #world {
   position: relative;
   margin: 0 auto;
@@ -14,7 +11,7 @@ h1 {
   border-radius: 5x;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
-  box-shadow: 8px 8px 15px #000;
+  opacity: 0.8;
 }
 
 #world .point {
@@ -27,4 +24,17 @@ h1 {
 #world .head {
   background-color: #260506;
   z-index: 1;
+}
+
+#stats {
+  border: 1px solid #000;
+  background-color: #aaa;
+  border-radius: 5x;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+
+  margin: 10px auto;
+  width: 300px;
+  padding: 5px 10px;
+  text-align: center;
 }

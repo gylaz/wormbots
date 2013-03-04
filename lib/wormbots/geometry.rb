@@ -9,14 +9,17 @@ module Geometry
     right: { x: 1,  y: 0 }
   }
 
-  def self.worm_intersection(world, worm)
-    worms = world.worms - [ worm ]
-    all_worms_points = worms.map(&:points).flatten.map {|p| [p.x, p.y] }
-    all_worms_points & worm.points.map {|p| [p.x, p.y] }
+  def self.intersecting_worms(world, worm)
+    other_worms = world.worms - [ worm ]
+    other_worms.select do |other_worm|
+      intersection_between_worms(worm, other_worm)
+    end
   end
 
-  def self.worm_intersection_exists?(world, worm)
-    !worm_intersection(world, worm).empty?
+  def self.intersection_between_worms(worm, other_worm)
+    points = other_worm.points.map { |point| [point.x, point.y] }
+    shared = points & worm.points.map { |point| [point.x, point.y] }
+    shared.first
   end
 
   def self.restricted_directions(point)

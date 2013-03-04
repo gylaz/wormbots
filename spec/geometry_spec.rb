@@ -8,22 +8,20 @@ describe Geometry do
 
   before { world.worms.clear }
 
-  describe ".worm_intersection" do
-    it "returns intersection coordinates" do
+  describe ".intersecting_worms" do
+    it "returns worms that share the same coordinates" do
       world.worms.push(worm1, worm3)
-      Geometry.worm_intersection(world, worm1).should == [[2, 2]]
+      Geometry.intersecting_worms(world, worm1).should == [worm3]
     end
   end
 
-  describe ".worm_intersection_exists?" do
-    it "returns true when two worms overlap" do
-      world.worms.push(worm1, worm3)
-      Geometry.worm_intersection_exists?(world, worm1).should be true
+  describe ".intersection_between_worms" do
+    it "returns coordinates that are shared between two worms" do
+      Geometry.intersection_between_worms(worm1, worm3).should == [2, 2]
     end
 
-    it "returns false when no worms overlap" do
-      world.worms.push(worm1, worm2)
-      Geometry.worm_intersection_exists?(world, worm2).should be false
+    it "returns nil when no worms overlap" do
+      Geometry.intersection_between_worms(worm1, worm2).should be_nil
     end
   end
 

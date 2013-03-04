@@ -1,4 +1,5 @@
 $(function() {
+  $.timeago.settings.strings.suffixAgo = 'since the world began';
   var source = new EventSource('/world');
 
   source.onopen = function() { console.log('connection opened'); };
@@ -7,8 +8,10 @@ $(function() {
   source.onmessage = function(e) {
     $('#world').empty();
 
-    var worms = $.parseJSON(e.data);
-    $.each(worms, function(i, worm) {
+    var data = $.parseJSON(e.data);
+    $('#stats #time .counter').text($.timeago(data.start_time));
+    $('#stats #worms .counter').text(data.points.length);
+    $.each(data.points, function(i, worm) {
       draw_worm(worm);
     });
   };
