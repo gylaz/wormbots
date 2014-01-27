@@ -1,39 +1,38 @@
 $(function() {
+  var world = $('#world');
+  var source = new EventSource('/world');
+
   $.timeago.settings.strings.suffixAgo = 'since the world began';
   $('.timeago').timeago();
 
-  var source = new EventSource('/world');
   source.onopen = function() { console.log('connection opened'); };
   source.onclose = function() { console.log('connection opened'); };
-
   source.onmessage = function(e) {
-    $('#world').empty();
-
     var worms = $.parseJSON(e.data);
+    var wormElements = [];
+
     $('#stats #worms .counter').text(worms.length);
     $.each(worms, function(i, worm) {
-      draw_worm(worm);
+      $.each(worm.points, function(index, point) {
+        var pointElement = generatePointElement(point, index, worm.fertile);
+        wormElements.push(pointElement[0]);
+      });
     });
+
+    world.html(wormElements);
   };
 });
 
-function draw_worm(worm) {
-  $.each(worm.points, function(i, point) {
-    var element;
-    var x = point[0];
-    var y = point[1];
+function generatePointElement(point, index, isFertile) {
+  var pointElement = $('<div class="point"></div>');
+  var x = point[0];
+  var y = point[1];
 
-    if (i == 0) {
-      element = $('<div class="point head"></div>');
-    }
-    else {
-      element = $('<div class="point"></div>');
+  if(index == 0) {
+    pointElement.addClass('head');
+  } else if(isFertile) {
+    pointElement.addClass('fertile');
+  }
 
-      if (worm.fertile) {
-        element.addClass('fertile');
-      }
-    }
-
-    element.css({top: y, left: x}).appendTo('#world');
-  });
+  return pointElement.css({top: y, left: x});
 }

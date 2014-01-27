@@ -1,26 +1,56 @@
+require 'wormbots/worm'
+require 'wormbots/geometry'
+require 'wormbots/navigation'
+require 'wormbots/mating'
+
 class World
+  INITIAL_WORMS = 10
   attr_reader :worms, :start_time
 
   def initialize
     @start_time = Time.now
     @worms = []
-    10.times { spawn_worm }
   end
 
-  def spawn_worm(coords = nil)
-    coordinates = coords || Geometry.random_point
-    worm = Worm.new(self, coordinates, Geometry.random_direction)
-    @worms << worm
-    worm
+  def populate
+    INITIAL_WORMS.times { spawn_worm }
   end
 
   def tick
-    @worms.each { |worm| worm.live(1) }
+    @worms.dup.each do |worm|
+      worm.live
+      attempt_to_mate(worm)
+
+      if worm.decomposed
+        @worms.delete(worm)
+      end
+    end
   end
 
   def data_points
     @worms.map do |worm|
-      { fertile: worm.fertile?, points: worm.coordinates }
+      {
+        fertile: worm.fertile?,
+        alive: worm.alive?,
+        points: worm.coordinates
+      }
     end
+  end
+
+  private
+
+  def attempt_to_mate(worm)
+    intersection_coordinates = Mating.new(worm, @worms).intersection_coordinates
+    if intersection_coordinates
+      rand(1..4).times { spawn_worm(intersection_coordinates) }
+      worm.defertilize
+    end
+  end
+
+  def spawn_worm(coords = nil)
+    coordinates = coords || Geometry.random_coordinate
+    worm = Worm.new(coordinates, Navigation.random_direction)
+    @worms << worm
+    worm
   end
 end
