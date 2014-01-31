@@ -41,7 +41,7 @@ class Worm
   end
 
   def die
-    @alive = true
+    @alive = false
   end
 
   def decompose

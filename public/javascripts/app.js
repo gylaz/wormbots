@@ -14,7 +14,7 @@ $(function() {
     $('#stats #worms .counter').text(worms.length);
     $.each(worms, function(i, worm) {
       $.each(worm.points, function(index, point) {
-        var pointElement = generatePointElement(point, index, worm.fertile);
+        var pointElement = generatePointElement(point, index, worm.fertile, worm.alive);
         wormElements.push(pointElement[0]);
       });
     });
@@ -23,7 +23,7 @@ $(function() {
   };
 });
 
-function generatePointElement(point, index, isFertile) {
+function generatePointElement(point, index, isFertile, isAlive) {
   var pointElement = $('<div class="point"></div>');
   var x = point[0];
   var y = point[1];
@@ -32,6 +32,10 @@ function generatePointElement(point, index, isFertile) {
     pointElement.addClass('head');
   } else if(isFertile) {
     pointElement.addClass('fertile');
+  }
+
+  if(!isAlive) {
+    pointElement.addClass('dead');
   }
 
   return pointElement.css({top: y, left: x});

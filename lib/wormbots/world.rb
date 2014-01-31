@@ -30,8 +30,8 @@ class World
   def data_points
     @worms.map do |worm|
       {
-        fertile: worm.fertile?,
         alive: worm.alive?,
+        fertile: worm.fertile?,
         points: worm.coordinates
       }
     end

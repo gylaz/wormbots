@@ -2,7 +2,7 @@ require 'wormbots/navigation'
 require 'wormbots/point_calculator'
 
 class LifeCycle
-  DECAY_DAYS = 20
+  DECAY_DAYS = 100
   INITIAL_SIZE = 4
 
   def initialize(worm)

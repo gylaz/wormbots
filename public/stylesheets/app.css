@@ -1,12 +1,11 @@
 body {
   background: #6c6 url("../images/grass.jpg") repeat;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 h1 {
   text-align: center;
   margin: 0;
-  opacity: 0.8;
 }
 
 #world {
@@ -30,6 +29,10 @@ h1 {
 
 #world .point.fertile {
   background-color: #df3a01;
+}
+
+#world .point.dead {
+  opacity: 0.5;
 }
 
 #world .head {
