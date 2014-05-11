@@ -1,42 +1,47 @@
 $(function() {
-  var world = $('#world');
   var source = new EventSource('/world');
+  var canvas = document.getElementById('world');
+  var context = canvas.getContext('2d');
 
   $.timeago.settings.strings.suffixAgo = 'since the world began';
   $('.timeago').timeago();
 
   source.onopen = function() { console.log('connection opened'); };
   source.onclose = function() { console.log('connection opened'); };
+
   source.onmessage = function(e) {
     var worms = $.parseJSON(e.data);
-    var wormElements = [];
 
     $('#stats #worms .counter').text(worms.length);
+    canvas.width = canvas.width;
+
     $.each(worms, function(i, worm) {
       $.each(worm.points, function(index, point) {
-        var pointElement = generatePointElement(point, index, worm.fertile, worm.alive);
-        wormElements.push(pointElement[0]);
+        drawPoint(context, point, index, worm.fertile, worm.alive);
       });
     });
-
-    world.html(wormElements);
   };
 });
 
-function generatePointElement(point, index, isFertile, isAlive) {
-  var pointElement = $('<div class="point"></div>');
+function drawPoint(context, point, index, isFertile, isAlive) {
   var x = point[0];
   var y = point[1];
+  var opacity = 1;
+  var rgbRange = '201, 96, 100';
 
-  if(index == 0) {
-    pointElement.addClass('head');
+  if(isHead(index)) {
+    rgbRange = '38, 5, 6';
   } else if(isFertile) {
-    pointElement.addClass('fertile');
+    rgbRange = '223, 58, 1';
   }
 
   if(!isAlive) {
-    pointElement.addClass('dead');
+    opacity = '0.5';
   }
 
-  return pointElement.css({top: y, left: x});
+  context.fillStyle = 'rgba(' + rgbRange + ', ' + opacity + ')';
+  console.log('rgba(' + rgbRange + ', ' + opacity + ')');
+  context.fillRect(x, y, 1, 1);
 }
+
+function isHead(index) { return index == 0; }
