@@ -2,6 +2,7 @@ require 'wormbots/worm'
 require 'wormbots/geometry'
 require 'wormbots/navigation'
 require 'wormbots/mating'
+require 'wormbots/point'
 
 class World
   INITIAL_WORMS = 10
@@ -32,7 +33,7 @@ class World
       {
         alive: worm.alive?,
         fertile: worm.fertile?,
-        points: worm.coordinates
+        points: worm.coordinates.map(&:to_json)
       }
     end
   end
@@ -47,9 +48,9 @@ class World
     end
   end
 
-  def spawn_worm(coords = nil)
-    coordinates = coords || Geometry.random_coordinate
-    worm = Worm.new(coordinates, Navigation.random_direction)
+  def spawn_worm(coordinates = Geometry.random_coordinate)
+    point = Point.new(coordinates[0], coordinates[1], true)
+    worm = Worm.new(point, Navigation.random_direction)
     @worms << worm
     worm
   end

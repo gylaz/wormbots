@@ -1,18 +1,18 @@
 require 'wormbots/life_cycle'
 
 class Worm
-  MAX_SIZE = 60
-  MATING_AGE = 18
+  MAX_SIZE = 40
+  MATING_AGE = 1000
 
   attr_reader :coordinates, :decomposed
   attr_accessor :direction
 
-  def initialize(starting_coords, direction)
+  def initialize(starting_point, direction)
     @decomposed = false
     @alive = true
     @age = 0
     @mating_cooldown = 0
-    @coordinates = [starting_coords]
+    @coordinates = [starting_point]
     @direction = direction
   end
 
@@ -75,6 +75,6 @@ class Worm
   end
 
   def adult?
-    size >= MATING_AGE
+    @age >= MATING_AGE
   end
 end

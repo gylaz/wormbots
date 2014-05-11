@@ -63,6 +63,7 @@ class LifeCycle
   Navigation::DIRECTIONS.each do |direction|
     define_method "move_#{direction}" do
       calculator = PointCalculator.new(@worm.head, direction)
+      @worm.coordinates[0].head = false
       @worm.coordinates.unshift(calculator.point_ahead)
       @worm.coordinates.pop
       @worm.direction = direction

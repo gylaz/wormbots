@@ -12,27 +12,27 @@ $(function() {
   source.onmessage = function(e) {
     var worms = $.parseJSON(e.data);
 
-    $('#stats #worms .counter').text(worms.length);
     canvas.width = canvas.width;
+    $('#stats #worms .counter').text(worms.length);
 
-    $.each(worms, function(i, worm) {
-      $.each(worm.points, function(index, point) {
-        drawPoint(context, point, index, worm.fertile, worm.alive);
+    worms.forEach(function(worm) {
+      moveHeadToLastPosition(worm.points);
+
+      worm.points.forEach(function(point) {
+        drawPoint(context, point, worm.fertile, worm.alive);
       });
     });
   };
 });
 
-function drawPoint(context, point, index, isFertile, isAlive) {
-  var x = point[0];
-  var y = point[1];
-  var opacity = 1;
-  var rgbRange = '201, 96, 100';
+function drawPoint(context, point, isFertile, isAlive) {
+  var opacity = '1';
+  var rgbRange = '200, 86, 86';
 
-  if(isHead(index)) {
+  if(point.head) {
     rgbRange = '38, 5, 6';
   } else if(isFertile) {
-    rgbRange = '223, 58, 1';
+    rgbRange = '186, 4, 4';
   }
 
   if(!isAlive) {
@@ -40,8 +40,10 @@ function drawPoint(context, point, index, isFertile, isAlive) {
   }
 
   context.fillStyle = 'rgba(' + rgbRange + ', ' + opacity + ')';
-  console.log('rgba(' + rgbRange + ', ' + opacity + ')');
-  context.fillRect(x, y, 1, 1);
+  context.fillRect(point.x, point.y, 2, 2);
 }
 
-function isHead(index) { return index == 0; }
+function moveHeadToLastPosition(points) {
+  var head = points.shift();
+  points.push(head);
+}

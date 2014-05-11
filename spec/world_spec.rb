@@ -52,13 +52,12 @@ describe World, '#tick' do
 
       4000.times { world.tick }
 
-      expect(world.worms.size).to be > World::INITIAL_WORMS
       world.worms.each do |worm|
-        worm.coordinates.each do |x, y|
-          expect(x).to be >= 0
-          expect(y).to be >= 0
-          expect(x).to be <= Geometry::MAX_X
-          expect(y).to be <= Geometry::MAX_Y
+        worm.coordinates.each do |point|
+          expect(point.x).to be >= 0
+          expect(point.y).to be >= 0
+          expect(point.x).to be <= Geometry::MAX_X
+          expect(point.y).to be <= Geometry::MAX_Y
         end
       end
     end
@@ -75,7 +74,7 @@ describe World, '#data_points' do
     expect(world.data_points.first).to eq(
       alive: true,
       fertile: false,
-      points: worm.coordinates
+      points: worm.coordinates.map(&:to_json)
     )
   end
 end

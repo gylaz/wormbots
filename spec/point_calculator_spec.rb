@@ -1,3 +1,4 @@
+require 'wormbots/point'
 require 'wormbots/point_calculator'
 
 describe PointCalculator, '#point_ahead' do
@@ -15,5 +16,5 @@ describe PointCalculator, '#point_behind' do
 end
 
 def calculator(direction)
-  PointCalculator.new([100, 200], direction)
+  PointCalculator.new(Point.new(100, 200), direction)
 end

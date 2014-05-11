@@ -1,9 +1,10 @@
+require 'wormbots/point'
 require 'wormbots/worm'
 require 'wormbots/life_cycle'
 
 describe LifeCycle, '#initialize' do
   it 'grows the worm' do
-    worm = Worm.new([1,1], :down)
+    worm = Worm.new(Point.new(1, 1), :down)
 
     LifeCycle.new(worm)
 
@@ -12,7 +13,7 @@ describe LifeCycle, '#initialize' do
 end
 
 describe LifeCycle, '#tick' do
-  let(:worm) { Worm.new([1,1], :down) }
+  let(:worm) { Worm.new(Point.new(1, 1), :down) }
   let!(:life_cycle) { LifeCycle.new(worm) }
 
   context 'when worm is alive' do
@@ -31,7 +32,7 @@ describe LifeCycle, '#tick' do
       expect { life_cycle.tick }.not_to change { worm.size }
 
       expect(worm.direction).to eq :right
-      expect(worm.head.to_a).to eq [2, 1]
+      expect([worm.head.x, worm.head.y]).to eq [2, 1]
     end
 
     context 'when worm should grow' do
