@@ -8,36 +8,16 @@ h1 {
   margin: 0;
 }
 
-#world {
-  position: relative;
-  margin: 0 auto;
-  width: 640px;
-  height: 480px;
+.canvas-container {
+  text-align: center;
+}
+
+canvas#world {
   border: 1px solid #000;
   background-color: #673520;
   border-radius: 5x;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
-}
-
-#world .point {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background-color: #c96064;
-}
-
-#world .point.fertile {
-  background-color: #df3a01;
-}
-
-#world .point.dead {
-  opacity: 0.5;
-}
-
-#world .head {
-  background-color: #260506;
-  z-index: 1;
 }
 
 #stats {
