@@ -3,5 +3,4 @@ class User
     31
 
   name: ->
-    debugger
     "Greg"
