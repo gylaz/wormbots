@@ -1,9 +1,8 @@
 class Test
   name: ->
-    debugger
-    console.log "hello"
+    console.log("hello")
     "John"
 
   bind: ->
-    handler = -> debugger; console.log("hi")
+    handler = -> console.log("hi")
     $('#hello').on('blur', handler)
