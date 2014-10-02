@@ -3,4 +3,4 @@
 blah = 'hello world'
 { :one => blah }
 
-puts "I say: " + blah
+puts "I say: " + blah + "hello"
