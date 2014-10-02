@@ -2,5 +2,6 @@
 { :fizz => 'bang' }
 blah = 'hello world'
 { :one => blah }
+{ :two => "three" }
 
-puts "I say: " + blah + "hello"
+puts "I say: " + blah
