@@ -8,7 +8,7 @@ puts "I say this: " + blah
 puts "I say this: " + blah
 puts "I say this: " + blah
 puts "I say this: " + blah
-puts "I say this: " + blah
+puts 'I say this: ' + blah
 puts "I say this: " + blah
 puts "I say this: " + blah
 puts "I say this: " + blah
