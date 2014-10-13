@@ -1,0 +1,8 @@
+CoffeeScript:
+  Enabled: true
+
+Style/HashSyntax:
+  EnforcedStyle: hash_rockets
+
+StringLiterals:
+  EnforcedStyle: single_quotes
