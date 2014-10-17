@@ -3,8 +3,8 @@ CoffeeScript:
 
 java_script:
   enabled: true
-  confi_file: javascript.json
+  config_file: javascript.json
 
 ruby:
   enabled: true
-  confi_file: ruby.yml
+  config_file: ruby.yml
