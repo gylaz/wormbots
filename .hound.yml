@@ -1,8 +1,10 @@
 CoffeeScript:
   Enabled: true
 
-Style/HashSyntax:
-  EnforcedStyle: hash_rockets
+java_script:
+  enabled: true
+  confi_file: javascript.json
 
-StringLiterals:
-  EnforcedStyle: single_quotes
+ruby:
+  enabled: true
+  confi_file: ruby.yml
