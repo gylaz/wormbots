@@ -1,0 +1,2 @@
+$(myVar).toggle();
+someOtherVar.hide();
