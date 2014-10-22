@@ -10,6 +10,7 @@ class Worm
   validates :blah1, length: {in: 6..80}
   validates :blah2, length: {in: 6..80}
   validates :blah3, length: {in: 6..80} 
+  options = {name: 'worm' }
 
   def initialize(starting_point, direction)
     @decomposed = false
