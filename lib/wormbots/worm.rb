@@ -7,6 +7,8 @@ class Worm
   attr_reader :coordinates, :decomposed
   attr_accessor :direction
 
+  validates :title, length: {in: 6..80}
+
   def initialize(starting_point, direction)
     @decomposed = false
     @alive = true
