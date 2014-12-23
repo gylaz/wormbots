@@ -1,1 +1,3 @@
 name = 'greg'
+
+puts name 
