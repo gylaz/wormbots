@@ -1,11 +1,12 @@
-require 'wormbots'
+require 'wormbots/world'
 
 describe World, '#populate' do
   it 'spawns 10 worms' do
     world = world_factory
+
     world.populate
 
-    expect(world).to have(10).worms
+    expect(world.worms.size).to eq 10
   end
 end
 
@@ -41,7 +42,7 @@ describe World, '#tick' do
 
       world.tick
 
-      expect(world).to have(0).worms
+      expect(world.worms.size).to eq 0
     end
   end
 
@@ -70,8 +71,10 @@ describe World, '#data_points' do
     world.populate
     worm = world.worms.first
 
-    expect(world).to have(10).data_points
-    expect(world.data_points.first).to eq(
+    data_points = world.data_points
+
+    expect(data_points.size).to eq 10
+    expect(data_points.first).to eq(
       alive: true,
       fertile: false,
       points: worm.coordinates.map(&:to_json)

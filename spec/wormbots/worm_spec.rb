@@ -7,7 +7,7 @@ describe Worm, '#tick' do
 
     worm.live
 
-    expect(worm).to have(4).coordinates
+    expect(worm.coordinates.size).to eq 4
   end
 end
 

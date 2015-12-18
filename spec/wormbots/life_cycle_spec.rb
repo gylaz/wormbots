@@ -8,7 +8,7 @@ describe LifeCycle, '#initialize' do
 
     LifeCycle.new(worm)
 
-    expect(worm).to have(LifeCycle::INITIAL_SIZE).coordinates
+    expect(worm.coordinates.size).to eq LifeCycle::INITIAL_SIZE
   end
 end
 
