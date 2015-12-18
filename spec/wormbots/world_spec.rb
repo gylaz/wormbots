@@ -24,8 +24,8 @@ describe World, '#tick' do
 
   context 'when two worms can be mated' do
     it 'mates worms' do
-      worm1 = worm_factory(coordinates: [[10, 10]])
-      worm2 = worm_factory(coordinates: [[10, 10]])
+      worm1 = worm_factory(coordinates: [Point.new(10, 10)], fertile?: true)
+      worm2 = worm_factory(coordinates: [Point.new(10, 10)], fertile?: true)
       world = world_factory(worm1, worm2)
 
       expect { world.tick }.to change { world.worms.size }
@@ -46,12 +46,13 @@ describe World, '#tick' do
     end
   end
 
-  context 'after 4000 ticks' do
-    it 'simulates a period of worm lives' do
+  context 'when simulating a long time' do
+    it 'does not allow worms go outside the world boundaries' do
+      long_time = 2000
       world = world_factory
       world.populate
 
-      4000.times { world.tick }
+      long_time.times { world.tick }
 
       world.worms.each do |worm|
         worm.coordinates.each do |point|
@@ -91,10 +92,10 @@ end
 def worm_factory(attributes = {})
   default_attributes = {
     live: nil,
-    fertile?: true,
+    fertile?: false,
     decomposed: false,
     defertilize: nil,
     coordinates: []
   }
-  double(:worm, default_attributes.merge(attributes))
+  instance_double('Worm', default_attributes.merge(attributes))
 end

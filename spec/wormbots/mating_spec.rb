@@ -41,7 +41,12 @@ describe Mating, '#intersection_coordinates' do
   end
 
   def mating_factory(worms)
-    world_worms = worms.map { |worm_attributes| double(:worm, worm_attributes) }
+    world_worms = worms.map do |worm_attributes|
+      coords = worm_attributes[:coordinates].map do |coord|
+        Point.new(coord.first, coord.last)
+      end
+      instance_double('Worm', worm_attributes.merge(coordinates: coords))
+    end
     Mating.new(world_worms.first, world_worms)
   end
 end
