@@ -1,3 +1,10 @@
+[![Circle
+CI](https://circleci.com/gh/gylaz/wormbots.svg?style=svg)](https://circleci.com/gh/gylaz/wormbots)
+
+# Description
+This is an worm farm simulation that uses Goliath to stream data via server-sent
+events and JavaScript to render it on the front-end.
+
 # Running
 To run the app:
 
