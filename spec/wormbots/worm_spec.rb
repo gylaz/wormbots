@@ -23,8 +23,7 @@ describe Worm, '#fertile?' do
 
     context 'when on cooldown' do
       it 'returns false' do
-        worm.stub(size: Worm::MATING_AGE)
-        worm.stub(on_mating_cooldown?: true)
+        worm.defertilize
 
         expect(worm).not_to be_fertile
       end
@@ -82,7 +81,8 @@ describe Worm, '#can_grow?' do
 
     context 'when reached max size' do
       it 'returns false' do
-        worm.stub(size: Worm::MAX_SIZE)
+        allow(worm).to receive(:size).and_return(Worm::MAX_SIZE)
+
         100.times { worm.increment_age }
 
         expect(worm.can_grow?).to be false

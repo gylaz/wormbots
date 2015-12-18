@@ -3,8 +3,9 @@ require 'wormbots/life_cycle'
 class Worm
   MAX_SIZE = 40
   MATING_AGE = 1000
+  GROWTH_INTERVAL_STEP = 100
 
-  attr_reader :coordinates, :decomposed
+  attr_reader :coordinates, :decomposed, :age
   attr_accessor :direction
 
   def initialize(starting_point, direction)
@@ -57,7 +58,7 @@ class Worm
   end
 
   def can_grow?
-    @age % 100 == 0 && !max_size?
+    @age % GROWTH_INTERVAL_STEP == 0 && !max_size?
   end
 
   def size

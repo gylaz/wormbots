@@ -18,16 +18,12 @@ describe LifeCycle, '#tick' do
 
   context 'when worm is alive' do
     it 'increments the age of worm' do
-      worm.stub(:increment_age)
-
-      life_cycle.tick
-
-      expect(worm).to have_received(:increment_age)
+      expect { life_cycle.tick }.to change{ worm.age }.by(1)
     end
 
     it 'moves the worm' do
-      Navigation.stub_chain(:new, :direction).and_return(:right)
-      worm.stub(:move_right)
+      navigation = instance_double("Navigation", direction: :right)
+      allow(Navigation).to receive(:new).and_return(navigation)
 
       expect { life_cycle.tick }.not_to change { worm.size }
 
@@ -37,7 +33,7 @@ describe LifeCycle, '#tick' do
 
     context 'when worm should grow' do
       it 'increases the size of worm' do
-        worm.stub(can_grow?: true)
+        allow(worm).to receive(:can_grow?).and_return(true)
 
         expect { life_cycle.tick }.to change { worm.size }.by(1)
       end
@@ -45,7 +41,7 @@ describe LifeCycle, '#tick' do
 
     context 'when worm should not grow' do
       it 'does not increase the size of worm' do
-        worm.stub(can_grow?: false)
+        allow(worm).to receive(:can_grow?).and_return(false)
 
         expect { life_cycle.tick }.not_to change { worm.size }
       end
@@ -53,8 +49,8 @@ describe LifeCycle, '#tick' do
 
     context 'when worm is max size' do
       it 'kills worm' do
-        worm.stub(max_size?: true)
-        worm.stub(:die)
+        allow(worm).to receive(:max_size?).and_return(true)
+        allow(worm).to receive(:die)
 
         life_cycle.tick
 
@@ -66,8 +62,8 @@ describe LifeCycle, '#tick' do
   context 'when worm is dead' do
     context 'when body is decaying' do
       it 'does not decompose worm' do
-        worm.stub(alive?: false)
-        worm.stub(:decompose)
+        allow(worm).to receive(:alive?).and_return(false)
+        allow(worm).to receive(:decompose)
 
         life_cycle.tick
 
@@ -77,8 +73,8 @@ describe LifeCycle, '#tick' do
 
     context 'when body has finished decaying' do
       it 'decomposes worm' do
-        worm.stub(alive?: false)
-        worm.stub(:decompose)
+        allow(worm).to receive(:alive?).and_return(false)
+        allow(worm).to receive(:decompose)
 
         LifeCycle::DECAY_DAYS.times { life_cycle.tick }
 
