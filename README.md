@@ -1,5 +1,4 @@
-[![Circle
-CI](https://circleci.com/gh/gylaz/wormbots.svg?style=svg)](https://circleci.com/gh/gylaz/wormbots)
+[![Circle CI](https://circleci.com/gh/gylaz/wormbots.svg?style=svg&circle-token=54ffe27f997f0c5c37abbc68ed2e8b13c25dcafd)](https://circleci.com/gh/gylaz/wormbots)
 
 # Description
 This is an worm farm simulation that uses Goliath to stream data via server-sent
