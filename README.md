@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/41fbc9cc25a649a2afb4d644edecb632)](https://www.codacy.com/app/gylaz/wormbots?utm_source=github.com&utm_medium=referral&utm_content=gylaz/wormbots&utm_campaign=badger)
 [![Circle CI](https://circleci.com/gh/gylaz/wormbots.svg?style=svg&circle-token=54ffe27f997f0c5c37abbc68ed2e8b13c25dcafd)](https://circleci.com/gh/gylaz/wormbots)
 
 # Description
