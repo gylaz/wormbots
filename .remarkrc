@@ -1,0 +1,5 @@
+{
+  "plugins": {
+    "lint-list-item-indent": true
+  }
+}
