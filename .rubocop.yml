@@ -1,2 +1,5 @@
-Style/StringLiterals:
-  EnforcedStyle: single_quotes
+AllCops:
+  TargetRubyVersion: 2.4.1
+
+Style/MethodCallWithoutArgsParentheses:
+  Enabled: true
